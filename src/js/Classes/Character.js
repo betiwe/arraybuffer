@@ -1,40 +1,38 @@
 export default class Character {
-  constructor() {
-    this.stoned = false;
-    this.distance = 1;
+  constructor(distance) {
+    this.characterStoned = false;
+    this.distance = distance;
   }
 
-  setStoned(value) {
-    this.stoned = value;
+  set stoned(value) {
+    this.characterStoned = value;
   }
 
-  setAttack(distance) {
-    if (distance > 0) {
-      this.distance = distance;
+  get stoned() {
+    return this.characterStoned;
+  }
+
+  set attack(value) {
+    this.attackValue = value;
+  }
+
+  get attack() {
+    const attackDamage = new Float64Array(5);
+
+    for (let i = 0; i < attackDamage.length; i += 1) {
+      attackDamage[i] = 1 - i / 10;
     }
+
     if (this.stoned) {
-      this.attack = Number(
-        (
-          this.attack * (1 - 0.1 * (this.distance - 1)) -
-          Math.log2(this.distance) * 5
-        ).toFixed(0)
-      );
-    } else {
-      this.attack = Number(
-        (this.attack * (1 - 0.1 * (this.distance - 1))).toFixed(0)
+      const stonedDamage = new Float64Array(5);
+      for (let i = 0; i < stonedDamage.length; i += 1) {
+        stonedDamage[i] = Math.log2(i + 1) * 5;
+      }
+      return Math.round(
+        this.attackValue * attackDamage[this.distance - 1] -
+          stonedDamage[this.distance - 1]
       );
     }
-  }
-
-  getStoned() {
-    return this.stoned;
-  }
-
-  getAttack() {
-    if (this.attack < 0 || this.attack > 100) {
-      this.attack = 0;
-    }
-
-    return this.attack;
+    return Math.round(this.attackValue * attackDamage[this.distance - 1]);
   }
 }
